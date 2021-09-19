@@ -38,8 +38,6 @@ r_code_extract_ggplots_code_list(script_path = "../../../../../docs/ggplots_scri
 `r flipbookr::chunk_reveal(code_seq = r_code_extract_ggplots_code_list(script = "https://raw.githubusercontent.com/EvaMaeRey/ggmemory/master/docs/ggplots_script.R"))`
 
 
-```{r}
-ggplot() +
-```
+
 
 

@@ -13,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 # A template for ggmemory
-## parse ggplot interactive history and relive it!
+## parse ggplot2 interactive history and relive it!
 ### 
 
 ---
@@ -28,74 +28,74 @@ class: center, middle, inverse, title-slide
 count: false
  
 
-.panel1-29883-auto[
+.panel1-57457-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_count(alpha = .5) +
+  geom_count(alpha = .5, size = 4) +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ```
 ]
  
-.panel2-29883-auto[
-![](skeleton_files/figure-html/29883_auto_01_output-1.png)&lt;!-- --&gt;
+.panel2-57457-auto[
+![](skeleton_files/figure-html/57457_auto_01_output-1.png)&lt;!-- --&gt;
 ]
 
 ---
 count: false
  
 
-.panel1-29883-auto[
+.panel1-57457-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_count(alpha = 2) +
+  geom_count(alpha = 2, size = 4) +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ```
 ]
  
-.panel2-29883-auto[
-![](skeleton_files/figure-html/29883_auto_02_output-1.png)&lt;!-- --&gt;
+.panel2-57457-auto[
+![](skeleton_files/figure-html/57457_auto_02_output-1.png)&lt;!-- --&gt;
 ]
 
 ---
 count: false
  
 
-.panel1-29883-auto[
+.panel1-57457-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_count(alpha = 2,
+  geom_count(alpha = 2, size = 4,
              color = "green") +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ```
 ]
  
-.panel2-29883-auto[
-![](skeleton_files/figure-html/29883_auto_03_output-1.png)&lt;!-- --&gt;
+.panel2-57457-auto[
+![](skeleton_files/figure-html/57457_auto_03_output-1.png)&lt;!-- --&gt;
 ]
 
 ---
 count: false
  
 
-.panel1-29883-auto[
+.panel1-57457-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_count(alpha = 2,
+  geom_count(alpha = 2, size = 4,
              color = "green",
              shape = "square") +
   ggxmean::geom_lm() +
@@ -103,12 +103,32 @@ ggplot(data = cars) +
 ```
 ]
  
-.panel2-29883-auto[
-![](skeleton_files/figure-html/29883_auto_04_output-1.png)&lt;!-- --&gt;
+.panel2-57457-auto[
+![](skeleton_files/figure-html/57457_auto_04_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-57457-auto[
+
+```r
+ggplot() +
+```
+]
+ 
+.panel2-57457-auto[
+
+```
+Error: &lt;text&gt;:2:0: unexpected end of input
+1: ggplot() +
+   ^
+```
 ]
 
 &lt;style&gt;
-.panel1-29883-auto {
+.panel1-57457-auto {
   color: black;
   width: 38.6060606060606%;
   hight: 32%;
@@ -116,7 +136,7 @@ ggplot(data = cars) +
   padding-left: 1%;
   font-size: 80%
 }
-.panel2-29883-auto {
+.panel2-57457-auto {
   color: black;
   width: 59.3939393939394%;
   hight: 32%;
@@ -124,7 +144,7 @@ ggplot(data = cars) +
   padding-left: 1%;
   font-size: 80%
 }
-.panel3-29883-auto {
+.panel3-57457-auto {
   color: black;
   width: NA%;
   hight: 33%;
@@ -138,15 +158,6 @@ ggplot(data = cars) +
 
 
 
-```r
-ggplot() +
-```
-
-```
-Error: &lt;text&gt;:2:0: unexpected end of input
-1: ggplot() +
-   ^
-```
 
 
     </textarea>

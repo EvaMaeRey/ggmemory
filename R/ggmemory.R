@@ -34,6 +34,36 @@ tibble::tibble(code = code) %>%
 
 
 
+#' Save a history and fix indentation (reformat code in RStudio),
+#' then identify pipelines
+#'
+#' @param script_path a path to a prepared r code script (prepared history)
+#' @param code r code or path to script
+#'
+#' @return a list containing ggplot code lines as vectors.
+#' @export
+#'
+#' @examples
+#' code = write_ggplots_code_example()
+#' r_code_extract_ggplots_code_list(code = code)
+r_code_extract_code_list <- function(script_path = NULL, code = readLines(script_path)){
+
+  if(is.null(script_path)) {
+
+    stringr::str_split(code, "\\n")[[1]] -> code
+
+  }
+
+  tibble::tibble(code = code) %>%
+    dplyr::mutate(is_indented = stringr::str_detect(.data$code, "^\\s")) %>%
+    dplyr::mutate(not_indented = !is_indented) %>%
+    dplyr::mutate(pipe_group = cumsum(.data$not_indented)) %>%
+    dplyr::group_by(.data$pipe_group) %>%
+    dplyr::summarise(code = paste0(.data$code, collapse = "\\n")) %>%
+    dplyr::pull(.data$code)
+
+}
+
 
 
 
