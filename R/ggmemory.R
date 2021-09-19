@@ -27,7 +27,8 @@ tibble::tibble(code = code) %>%
   dplyr::filter(.data$starts_with_gg | .data$is_indented) %>%
   dplyr::filter(.data$gg_group != 0) %>%
   dplyr::group_by(.data$gg_group) %>%
-  dplyr::summarise(code = paste0(.data$code, collapse = "\\n")) %>%
+  dplyr::summarise(code = paste0(.data$code, collapse = "hellothere")) %>%
+  dplyr::mutate(code = stringr::str_split(code, "hellothere")) %>%
   dplyr::pull(.data$code)
 
 }
@@ -45,7 +46,7 @@ tibble::tibble(code = code) %>%
 #'
 #' @examples
 #' code = write_ggplots_code_example()
-#' r_code_extract_ggplots_code_list(code = code)
+#' r_code_extract_code_list(code = code)
 r_code_extract_code_list <- function(script_path = NULL, code = readLines(script_path)){
 
   if(is.null(script_path)) {
@@ -54,13 +55,16 @@ r_code_extract_code_list <- function(script_path = NULL, code = readLines(script
 
   }
 
-  tibble::tibble(code = code) %>%
+tibble::tibble(code = code) %>%
     dplyr::mutate(is_indented = stringr::str_detect(.data$code, "^\\s")) %>%
     dplyr::mutate(not_indented = !is_indented) %>%
     dplyr::mutate(pipe_group = cumsum(.data$not_indented)) %>%
     dplyr::group_by(.data$pipe_group) %>%
-    dplyr::summarise(code = paste0(.data$code, collapse = "\\n")) %>%
+    dplyr::summarise(code = paste0(.data$code, collapse = "hellothere")) %>%
+    dplyr::mutate(code = stringr::str_split(code, "hellothere")) %>%
     dplyr::pull(.data$code)
+
+
 
 }
 
@@ -127,8 +131,6 @@ ggplot(data = cars) +
   labs(caption = "Population are observations from cars correlation study dataset") +
   labs(title = "16 draws, random sample of 8 observations from the population") +
   labs(subtitle = "Depending on our particular random sample,
-slopes are flatter or steeper and intercepts vary") +
+      slopes are flatter or steeper and intercepts vary") +
   ggxmean::geom_lm_label()'
-
-
 }

@@ -29,15 +29,18 @@ flipbookr:::create_code() %>%
   flipbookr:::parsed_return_partial_code_sequence()
 
 r_code_extract_ggplots_code_list(script_path = "../../../../../docs/ggplots_script.R")
-"../../../../../docs/ggplots_script.R"
+"../../../../../docs/ggplots_script.R" %>% 
+  r_code_extract_ggplots_code_list(script_path = .)
+
+"../../../../../docs/ggplots_script.R" %>% 
+  r_code_extract_code_list(script_path = .)
 ```
-
-
 
 
 `r flipbookr::chunk_reveal(code_seq = r_code_extract_ggplots_code_list(script = "https://raw.githubusercontent.com/EvaMaeRey/ggmemory/master/docs/ggplots_script.R"))`
 
+---
 
 
-
+`r flipbookr::chunk_reveal(code_seq = r_code_extract_code_list(script = "https://raw.githubusercontent.com/EvaMaeRey/ggmemory/master/docs/ggplots_script.R"))`
 
