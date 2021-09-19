@@ -1,7 +1,7 @@
 ---
-title: "A minimal flipbook"
-subtitle: "With flipbookr and xaringan"
-author: "You!"
+title: "A template for ggmemory"
+subtitle: "parse ggplot2 interactive history and relive it!"
+author: " "
 output:
   xaringan::moon_reader:
     lib_dir: libs
@@ -17,7 +17,8 @@ output:
 ```{r, include = F}
 # This is the recommended set up for flipbooks
 # you might think about setting cache to TRUE as you gain practice --- building flipbooks from scratch can be time consuming
-knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE, comment = "", cache = F)
+knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE,
+                      comment = "", cache = F, error = T)
 library(flipbookr)
 library(tidyverse)
 library(ggsample)
@@ -34,6 +35,11 @@ r_code_extract_ggplots_code_list(script_path = "../../../../../docs/ggplots_scri
 
 
 
-`r flipbookr::chunk_reveal(code_seq = r_code_extract_ggplots_code_list(script_path = "../../../../../docs/ggplots_script.R"))`
+`r flipbookr::chunk_reveal(code_seq = r_code_extract_ggplots_code_list(script = "https://raw.githubusercontent.com/EvaMaeRey/ggmemory/master/docs/ggplots_script.R"))`
+
+
+```{r}
+ggplot() +
+```
 
 
