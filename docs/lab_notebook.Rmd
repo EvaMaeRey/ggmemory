@@ -1,0 +1,154 @@
+
+
+
+
+```{r, eval=FALSE}
+"hi"
+1+1
+savehistory("temp_history.R") # nicely saves history...
+savehistory(file = ".Rhistory")
+loadhistory(file = ".Rhistory")
+
+# history(max.show = 25, reverse = FALSE, )
+```
+
+
+but indentation is lost...
+
+formatR code input seems to require error free code (i.e. balanced parenthases etc)
+
+confirmed!
+
+Yihui Xie
+@xieyihui
+Replying to
+@EvaMaeRey
+
+> Sorry, I'm afraid that's not possible. formatR::tidy_source() relies on parse(), which means the code has to be syntactically valid. RStudio IDE uses a different method to reformat code, which I believe is not through R (otherwise it would be possible to port to an R package).
+11:47 AM · Sep 29, 2021·Twitter Web App
+
+
+Yihui Xie
+@xieyihui
+·
+Sep 29
+Replying to 
+@xieyihui
+ and 
+@EvaMaeRey
+@chrisderv
+
+> Do you know what technology RStudio IDE uses to reformat R code? (It might be a feature of the Ace editor, or a certain syntax analyzer/linter in a certain language such as Java or JavaScript)
+
+Christophe Dervieux
+@chrisderv
+·
+Sep 29
+
+> I don't really know exactly how this is done in the IDE. From the source code, I think this is a syntax analyser in Java. 
+I don't know what you want to do exactly but in the IDE you can select text then rstudioapi::executeCommand("reformatCode")? Same as pressing CMD + SHIFT + A
+
+```{r}
+rstudioapi::executeCommand("reformatCode")
+
+
+"hi"
+
+
+```
+
+
+Mickaël CANOUIL
+@mickaelcanouil
+·
+Sep 29
+
+> I would be really cautious about something that “guess” what is wrong or right in a code to reformat it, i.e., if there is an opened parenthesis alone, is it one too much or is it the lack of the closing one?
+I’d rather use a linter and solve the issue myself Smiling face with open mouth and cold sweat
+
+I wrote savehistory_last_n() which takes history and saves only at last n lines.
+
+rstudioapi::executeCommand("reformatCode")
+
+
+```{r}
+code = "ggplot() +"
+sf <- srcfile(code)
+try(parse(text = code, srcfile = sf))
+utils::getParseData(sf)
+```
+
+Gina Reynolds
+@EvaMaeRey
+·
+Sep 12, 2020
+
+> I think some duplicated effort is not a problem!  People usually problems differently. Then coming together w/ those different takes can be really Exploding head colabs!  It's the way I see the flipbookr colab w 
+@grrrck @statsgen
+
+
+Gina Reynolds
+@EvaMaeRey
+·
+Sep 12, 2020
+
+> So anyway, flipbookr could be used to take that collection of images and send each to a separate slide in a Xarinagan slide show, if you are interested in non gif platform. I guess the go-at-your-own-pace aspect could be of interest. People usually don't consume gifs this way.
+
+Gina Reynolds
+@EvaMaeRey
+·
+Sep 12, 2020
+
+> I've found that loading the flipbooks gets a bit sluggish if you have a large number (which would certainly be the case for this project trying to capture the entire process of data to viz, not a distilled version) of high resolution images though.
+
+Gina Reynolds
+@EvaMaeRey
+Replying to 
+@EvaMaeRey
+ 
+@ellis_hughes
+ and 5 others
+ 
+> regarding capturing code, perhaps using history is another approach? and then parsing that code?  Seems to me that history in RStudio does not preserve indentation.  Crying face Don't know why!  why?!?
+
+11:34 AM · Sep 12, 2020·Twitter Web App
+View Tweet activity
+1
+ Like
+
+Gina Reynolds
+@EvaMaeRey
+·
+Sep 12, 2020
+Replying to 
+@EvaMaeRey
+ 
+@ellis_hughes
+ and 5 others
+ 
+> code sequences (a list of code as strings) can be fed into flipbookr's chunk_reveal() function instead of the default (a sequence automatically generated from a single pipeline).  I think it works!  Rarely (never?) used it!
+
+Ellis Hughes
+@ellis_hughes
+·
+Sep 12, 2020
+Replying to 
+@EvaMaeRey
+ 
+@tladeras
+ and 4 others
+ 
+> But could we use styler or something to format it nicely per standard R formatting principles?
+
+Gina Reynolds
+@EvaMaeRey
+·
+Sep 12, 2020
+
+> Could be.  Maybe even easier to read than original!
+
+
+
+
+
+

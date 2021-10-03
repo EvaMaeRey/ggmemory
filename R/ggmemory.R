@@ -134,3 +134,28 @@ ggplot(data = cars) +
       slopes are flatter or steeper and intercepts vary") +
   ggxmean::geom_lm_label()'
 }
+
+
+savehistory_last_n <- function(file = "temp_history.R",
+                               n = NULL){
+
+  savehistory(file = file)
+
+  readLines(con = file) ->
+    my_lines
+
+if(!is_null(n)){
+
+  start <- length(my_lines) - n
+  end <- length(my_lines)
+
+  my_lines <- my_lines[start:end]
+
+  }
+
+
+
+}
+
+
+

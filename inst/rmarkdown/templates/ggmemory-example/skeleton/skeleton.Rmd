@@ -34,6 +34,8 @@ r_code_extract_ggplots_code_list(script_path = "../../../../../docs/ggplots_scri
 
 "../../../../../docs/ggplots_script.R" %>% 
   r_code_extract_code_list(script_path = .)
+
+
 ```
 
 
