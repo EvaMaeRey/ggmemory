@@ -69,11 +69,6 @@ readLines("./ggplots_script.R")
 formatted_history_script <- "./ggplots_script.R"
 
 # looks for pipelines starting with gg*
-my_ggplots_code <- r_code_extract_ggplots_code_list(script_path = formatted_history_script)
-
-my_ggplots_code
-
-# parses code based on indentation. Code breaks are before non-indented lines
 my_executions <- r_code_extract_code_list(script_path = formatted_history_script)
 
 my_executions
