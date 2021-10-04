@@ -1,0 +1,91 @@
+---
+title: "A template for {ggmemory}"
+subtitle: "parse data analytics interactive session history and relive it using xaringan and flipbookr"
+author: "Final package name TBD; candidates: {memory}, {instantreplay}, {replay}, {reminisce}, {rememberr}, lots of options"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: [default, hygge, ninjutsu]
+    nature:
+      ratio: 16:9
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+## This package addresses the question: *Exactly how did we arrive at data analytic products (visualizations, summaries, models)?*
+
+--
+
+```{r, out.width="60%", echo = F}
+knitr::include_graphics("https://media1.giphy.com/media/777Aby0ZetYE8/giphy.gif?cid=ecf05e47fxfri9ro2qxy8i7jhnalmh6lsnmpabijv8e8oo5n&rid=giphy.gif&ct=g")
+```
+
+
+
+---
+
+
+```{r, include = TRUE}
+# This is the recommended set up for this {memory} package
+# you might reset include = F for your book if you aren't wanting to communicate about knitr settings
+
+knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE,
+                      comment = "", cache = F, error = T)
+library(flipbookr)
+library(tidyverse)
+library(ggmemory)
+```
+
+---
+
+# Code preparation
+
+--
+
+## history to code a list of code snippits.
+
+---
+
+```{r, include = TRUE}
+# formatting script is a bit manual at this point
+# Saved history in RStudio at least does not preserve user indentation
+# User may use savehistory(file = "my_history.R") to recall history, or send history manually from history pane to .R File
+# then w/ .R script of interest open, restore indentation (and get a lot of other nice formatting) via rstudioapi::executeCommand("reformatCode")
+# or Code -> Reformat Code from RStudio GUI
+# then indentation will be ready for {memory}'s parsing
+formatted_history_script <- "./ggplots_script.R"
+
+# looks for pipelines starting with gg*
+my_ggplots_code <- r_code_extract_ggplots_code_list(script_path = formatted_history_script)
+
+my_ggplots_code
+
+# parses code based on indentation. Code breaks are before non-indented lines
+my_executions <- r_code_extract_code_list(script_path = formatted_history_script)
+
+my_executions
+
+```
+
+---
+class: inverse, middle, center
+
+
+# Reviewing code
+
+--
+
+## inline code is used to deliver each element of code sequence to a slide w/ associated output:
+
+--
+
+## `flipbookr::chunk_reveal(code_seq = my_executions)`
+
+
+---
+
+
+`r flipbookr::chunk_reveal(code_seq = my_executions)`
+
