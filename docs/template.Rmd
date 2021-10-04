@@ -51,9 +51,20 @@ library(ggmemory)
 ```{r, include = TRUE}
 # formatting script is a bit manual at this point
 # Saved history in RStudio at least does not preserve user indentation
-# User may use savehistory(file = "my_history.R") to recall history, or send history manually from history pane to .R File
-# then w/ .R script of interest open, restore indentation (and get a lot of other nice formatting) via rstudioapi::executeCommand("reformatCode")
+# User may use savehistory(file = "my_history.R") to recall history, 
+# or send history manually from history pane to .R File
+# then w/ .R script of interest open, restore indentation 
+# (and get a lot of other nice formatting) via 
+# rstudioapi::executeCommand("reformatCode")
 # or Code -> Reformat Code from RStudio GUI
+# here's the contents of one saved history that's been reformatted
+readLines("./ggplots_script.R")
+```
+
+
+---
+
+```{r, include = TRUE}
 # then indentation will be ready for {memory}'s parsing
 formatted_history_script <- "./ggplots_script.R"
 

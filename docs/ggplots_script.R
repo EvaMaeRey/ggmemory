@@ -22,37 +22,37 @@ ggplot(data = cars) +
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(size = 4)
+  geom_point(size = 8)
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(size = 4) +
+  geom_point(size = 8) +
   ggxmean::geom_lm()
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(size = 4) +
+  geom_point(size = 8) +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
   geom_point(alpha = .75,
-             size = 4) +
+             size = 8) +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
   geom_point(alpha = .75,
-             size = 4,
+             size = 8,
              color = "green") +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(alpha = .75, size = 4,
+  geom_point(alpha = .75, size = 8,
              color = "green",
              shape = "square") +
   ggxmean::geom_lm() +
@@ -60,7 +60,7 @@ ggplot(data = cars) +
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(alpha = .75, size = 4,
+  geom_point(alpha = .75, size = 8,
              color = "green",
              shape = "square") +
   ggxmean::geom_lm() +
