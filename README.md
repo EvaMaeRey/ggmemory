@@ -115,8 +115,7 @@ where important points of decision: {ggstamp} and {ggsample}.
 
 ## Related work.
 
-{camcorder} is a package that seeks to capture all *data visualizations*
-produced in an interactive session. These are then reproduced together
-in a gif. The package’s focus is on evolution of the output rather than
-translation between code and output. The strategy to achieve this too,
-is fairly different from {memory}.
+A cool package also doing work in this area – data analytics evolution –
+is {camcorder}. Once the ‘camcorder’ is turned on, this package saves
+all capture all *data visualizations* produced in an interactive
+session. Then, these are reproduced together in a gif.

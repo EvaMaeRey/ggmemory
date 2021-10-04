@@ -206,3 +206,118 @@ savehistory("temp_history.R") # nicely saves history...
 savehistory(file = ".Rhistory")
 1+1
 savehistory("temp_history.R") # nicely saves history...
+savehistory(file = ".Rhistory")
+?savehistory
+code = "ggplot() +"
+sf <- srcfile(code)
+try(parse(text = code, srcfile = sf))
+utils::getParseData(sf)
+code = "ggplot() +"
+sf <- srcfile(code)
+try(parse(text = code, srcfile = sf))
+utils::getParseData(sf)
+usethis::use_readme_rmd()
+alpha = .5)' %>%
+'library(ggplot2)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta")
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8,
+alpha = .5)' %>%
+r_code_extract_code_list()
+'library(ggplot2)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta")
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8,
+alpha = .5)' %>%
+ggmemory::r_code_extract_code_list()
+library(magrittr)
+'library(ggplot2)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta")
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8,
+alpha = .5)' %>%
+ggmemory::r_code_extract_code_list()
+library(magrittr)
+'library(ggplot2)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta")
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8,
+alpha = .5)' %>%
+ggmemory::r_code_extract_code_list(code = .)
+size = 8)' %>%
+'library(ggplot2)
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta")
+ggplot(data = cars) +
+aes(x = speed) +
+aes(y = dist) +
+geom_point(color = "magenta",
+size = 8)' %>%
+ggmemory::r_code_extract_code_list(code = .) ->
+my_executions
+flipbookr::chunk_reveal(code_seq = my_executions)
+knitr::include_graphics("https://giphy.com/embed/777Aby0ZetYE8")
+knitr::include_graphics("https://media1.giphy.com/media/777Aby0ZetYE8/giphy.gif?cid=ecf05e47fxfri9ro2qxy8i7jhnalmh6lsnmpabijv8e8oo5n&rid=giphy.gif&ct=g")
+code = "ggplot() +"
+sf <- srcfile(code)
+parse(text = code, srcfile = sf)
+utils::getParseData(sf)
+parse(text = code, srcfile = sf)
+code = "ggplot() +"
+sf <- srcfile(code)
+try(parse(text = code, srcfile = sf))
+utils::getParseData(sf)
+code = "ggplot() +"
+sf <- srcfile(code)
+parse(text = code, srcfile = sf)
+rstudioapi::executeCommand("reformatCode")
+"hi"
+"hi"
+1+1
+savehistory("temp_history.R") # nicely saves history...
