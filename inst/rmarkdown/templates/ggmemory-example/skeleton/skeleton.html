@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>A template for ggmemory</title>
+    <title>A template for {ggmemory}</title>
     <meta charset="utf-8" />
+    <meta name="author" content="Final package name TBD; candidates: {memory}, {instantreplay}, {replay}, {reminisce}, {rememberr}, lots of options" />
     <script src="libs/header-attrs-2.6/header-attrs.js"></script>
     <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
     <link href="libs/remark-css-0.0.1/hygge.css" rel="stylesheet" />
@@ -12,186 +13,246 @@
     <textarea id="source">
 class: center, middle, inverse, title-slide
 
-# A template for ggmemory
-## parse ggplot2 interactive history and relive it!
-### 
+# A template for {ggmemory}
+## parse data analytics interactive session history and relive it!
+### Final package name TBD; candidates: {memory}, {instantreplay}, {replay}, {reminisce}, {rememberr}, lots of options
 
 ---
 
 
 
+## This package addresses the question: *Exactly how did we arrive at data analytic products (visualizations, summaries, models)?*
+
+--
+
+&lt;img src="https://media1.giphy.com/media/777Aby0ZetYE8/giphy.gif?cid=ecf05e47fxfri9ro2qxy8i7jhnalmh6lsnmpabijv8e8oo5n&amp;rid=giphy.gif&amp;ct=g" width="60%" /&gt;
 
 
 
-count: false
- 
+---
 
-.panel1-94249-auto[
+
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = .5) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+# This is the recommended set up for this {memory} package
+# you might reset include = F for your book if you aren't wanting to communicate about knitr settings
+
+knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE,
+                      comment = "", cache = F, error = T)
+library(flipbookr)
+library(tidyverse)
 ```
-]
- 
-.panel2-94249-auto[
-![](skeleton_files/figure-html/94249_auto_01_output-1.png)&lt;!-- --&gt;
-]
 
----
-count: false
- 
+```
+## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+```
 
-.panel1-94249-auto[
+```
+## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.7
+## ✓ tidyr   1.0.2     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'tibble' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'purrr' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'dplyr' was built under R version 3.6.2
+```
+
+```
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+```
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = .5) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+library(ggmemory)
 ```
-]
- 
-.panel2-94249-auto[
-![](skeleton_files/figure-html/94249_auto_02_output-1.png)&lt;!-- --&gt;
-]
 
 ---
-count: false
- 
 
-.panel1-94249-auto[
+# Code preparation
+
+--
+
+## history to code a list of code snippits.
+
+---
+
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = .5, size = 4) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+# formatting script is a bit manual at this point
+# Saved history in RStudio at least does not preserve user indentation
+# User may use savehistory(file = "my_history.R") to recall history, or send history manually from history pane to .R File
+# then w/ .R script of interest open, restore indentation (and get a lot of other nice formatting) via rstudioapi::executeCommand("reformatCode")
+# or Code -&gt; Reformat Code from RStudio GUI
+# then indentation will be ready for {memory}'s parsing
+formatted_history_script &lt;- "../../../../../docs/ggplots_script.R"
+
+# looks for pipelines starting with gg*
+my_ggplots_code &lt;- r_code_extract_ggplots_code_list(script_path = formatted_history_script)
+
+my_ggplots_code
 ```
-]
- 
-.panel2-94249-auto[
-![](skeleton_files/figure-html/94249_auto_03_output-1.png)&lt;!-- --&gt;
-]
 
----
-count: false
- 
+```
+[[1]]
+[1] "ggplot(data = cars) +" "  aes(x = speed) +"    "  aes(y = dist) +"    
+[4] "  geom_point()"       
 
-.panel1-94249-auto[
+[[2]]
+[1] "ggplot(data = cars) +"  "  aes(x = speed) +"     "  aes(y = dist) +"     
+[4] "  geom_point(size = 4)"
+
+[[3]]
+[1] "ggplot(data = cars) +"    "  aes(x = speed) +"      
+[3] "  aes(y = dist) +"        "  geom_point(size = 4) +"
+[5] "  ggxmean::geom_lm()"    
+
+[[4]]
+[1] "ggplot(data = cars) +"        "  aes(x = speed) +"          
+[3] "  aes(y = dist) +"            "  geom_point(size = 4) +"    
+[5] "  ggxmean::geom_lm() +"       "  ggxmean::geom_lm_formula()"
+
+[[5]]
+[1] "ggplot(data = cars) +"        "  aes(x = speed) +"          
+[3] "  aes(y = dist) +"            "  geom_point(alpha = .75,"   
+[5] "             size = 4) +"     "  ggxmean::geom_lm() +"      
+[7] "  ggxmean::geom_lm_formula()"
+
+[[6]]
+[1] "ggplot(data = cars) +"             "  aes(x = speed) +"               
+[3] "  aes(y = dist) +"                 "  geom_point(alpha = .75,"        
+[5] "             size = 4,"            "             color = \"green\") +"
+[7] "  ggxmean::geom_lm() +"            "  ggxmean::geom_lm_formula()"     
+
+[[7]]
+[1] "ggplot(data = cars) +"               "  aes(x = speed) +"                 
+[3] "  aes(y = dist) +"                   "  geom_point(alpha = .75, size = 4,"
+[5] "             color = \"green\","     "             shape = \"square\") +" 
+[7] "  ggxmean::geom_lm() +"              "  ggxmean::geom_lm_formula()"       
+
+[[8]]
+[1] "ggplot(data = cars) +"               
+[2] "  aes(x = speed) +"                  
+[3] "  aes(y = dist) +"                   
+[4] "  geom_point(alpha = .75, size = 4," 
+[5] "             color = \"green\","     
+[6] "             shape = \"square\") +"  
+[7] "  ggxmean::geom_lm() +"              
+[8] "  ggxmean::geom_lm_formula(size = 8)"
+
+[[9]]
+[1] "ggplot() +"
+```
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = 2, size = 4) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+# parses code based on indentation. Code breaks are before non-indented lines
+my_executions &lt;- r_code_extract_code_list(script_path = formatted_history_script)
+
+my_executions
 ```
-]
- 
-.panel2-94249-auto[
-![](skeleton_files/figure-html/94249_auto_04_output-1.png)&lt;!-- --&gt;
-]
+
+```
+[[1]]
+[1] "library(tidyverse)"
+
+[[2]]
+[1] "1 + 1"
+
+[[3]]
+[1] "cars"
+
+[[4]]
+[1] "cars %&gt;%"                    "  mutate(slow = speed &lt; 15)"
+
+[[5]]
+[1] "cars %&gt;%"                        "  mutate(slow = speed &lt; 15) %&gt;%"
+[3] "  tail()"                       
+
+[[6]]
+[1] "cars %&gt;%"                        "  mutate(slow = speed &lt; 15) %&gt;%"
+[3] "  tail() %&gt;%"                    "  .[,2]"                        
+
+[[7]]
+[1] "cars %&gt;%"                        "  mutate(slow = speed &lt; 15) %&gt;%"
+[3] "  tail() %&gt;%"                    "  .[,2] %&gt;%"                    
+[5] "  length()"                     
+
+[[8]]
+[1] "ggplot(data = cars) +" "  aes(x = speed) +"    "  aes(y = dist) +"    
+[4] "  geom_point()"       
+
+[[9]]
+[1] "ggplot(data = cars) +"  "  aes(x = speed) +"     "  aes(y = dist) +"     
+[4] "  geom_point(size = 4)"
+
+[[10]]
+[1] "ggplot(data = cars) +"    "  aes(x = speed) +"      
+[3] "  aes(y = dist) +"        "  geom_point(size = 4) +"
+[5] "  ggxmean::geom_lm()"    
+
+[[11]]
+[1] "ggplot(data = cars) +"        "  aes(x = speed) +"          
+[3] "  aes(y = dist) +"            "  geom_point(size = 4) +"    
+[5] "  ggxmean::geom_lm() +"       "  ggxmean::geom_lm_formula()"
+
+[[12]]
+[1] "ggplot(data = cars) +"        "  aes(x = speed) +"          
+[3] "  aes(y = dist) +"            "  geom_point(alpha = .75,"   
+[5] "             size = 4) +"     "  ggxmean::geom_lm() +"      
+[7] "  ggxmean::geom_lm_formula()"
+
+[[13]]
+[1] "ggplot(data = cars) +"             "  aes(x = speed) +"               
+[3] "  aes(y = dist) +"                 "  geom_point(alpha = .75,"        
+[5] "             size = 4,"            "             color = \"green\") +"
+[7] "  ggxmean::geom_lm() +"            "  ggxmean::geom_lm_formula()"     
+
+[[14]]
+[1] "ggplot(data = cars) +"               "  aes(x = speed) +"                 
+[3] "  aes(y = dist) +"                   "  geom_point(alpha = .75, size = 4,"
+[5] "             color = \"green\","     "             shape = \"square\") +" 
+[7] "  ggxmean::geom_lm() +"              "  ggxmean::geom_lm_formula()"       
+
+[[15]]
+[1] "ggplot(data = cars) +"               
+[2] "  aes(x = speed) +"                  
+[3] "  aes(y = dist) +"                   
+[4] "  geom_point(alpha = .75, size = 4," 
+[5] "             color = \"green\","     
+[6] "             shape = \"square\") +"  
+[7] "  ggxmean::geom_lm() +"              
+[8] "  ggxmean::geom_lm_formula(size = 8)"
+
+[[16]]
+[1] "ggplot() +"
+```
 
 ---
-count: false
- 
+class: inverse, middle, center
 
-.panel1-94249-auto[
 
-```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = 2, size = 4,
-             color = "green") +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
-```
-]
- 
-.panel2-94249-auto[
-![](skeleton_files/figure-html/94249_auto_05_output-1.png)&lt;!-- --&gt;
-]
+# Reviewing code
 
----
-count: false
- 
+--
 
-.panel1-94249-auto[
+## inline code is used to deliver each element of code sequence to a slide w/ associated output:
 
-```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = 2, size = 4,
-             color = "green",
-             shape = "square") +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
-```
-]
- 
-.panel2-94249-auto[
-![](skeleton_files/figure-html/94249_auto_06_output-1.png)&lt;!-- --&gt;
-]
+--
 
----
-count: false
- 
-
-.panel1-94249-auto[
-
-```r
-ggplot() +
-```
-]
- 
-.panel2-94249-auto[
-
-```
-Error: &lt;text&gt;:2:0: unexpected end of input
-1: ggplot() +
-   ^
-```
-]
-
-&lt;style&gt;
-.panel1-94249-auto {
-  color: black;
-  width: 38.6060606060606%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel2-94249-auto {
-  color: black;
-  width: 59.3939393939394%;
-  hight: 32%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-.panel3-94249-auto {
-  color: black;
-  width: NA%;
-  hight: 33%;
-  float: left;
-  padding-left: 1%;
-  font-size: 80%
-}
-&lt;/style&gt;
-
+## `flipbookr::chunk_reveal(code_seq = my_executions)`
 
 
 ---
@@ -200,14 +261,14 @@ Error: &lt;text&gt;:2:0: unexpected end of input
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
 library(tidyverse)
 ```
 ]
  
-.panel2-95600-auto[
+.panel2-72793-auto[
 
 ]
 
@@ -215,14 +276,14 @@ library(tidyverse)
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
 1 + 1
 ```
 ]
  
-.panel2-95600-auto[
+.panel2-72793-auto[
 
 ```
 [1] 2
@@ -233,7 +294,75 @@ count: false
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
+
+```r
+cars
+```
+]
+ 
+.panel2-72793-auto[
+
+```
+   speed dist
+1      4    2
+2      4   10
+3      7    4
+4      7   22
+5      8   16
+6      9   10
+7     10   18
+8     10   26
+9     10   34
+10    11   17
+11    11   28
+12    12   14
+13    12   20
+14    12   24
+15    12   28
+16    13   26
+17    13   34
+18    13   34
+19    13   46
+20    14   26
+21    14   36
+22    14   60
+23    14   80
+24    15   20
+25    15   26
+26    15   54
+27    16   32
+28    16   40
+29    17   32
+30    17   40
+31    17   50
+32    18   42
+33    18   56
+34    18   76
+35    18   84
+36    19   36
+37    19   46
+38    19   68
+39    20   32
+40    20   48
+41    20   52
+42    20   56
+43    20   64
+44    22   66
+45    23   54
+46    24   70
+47    24   92
+48    24   93
+49    24  120
+50    25   85
+```
+]
+
+---
+count: false
+ 
+
+.panel1-72793-auto[
 
 ```r
 cars %&gt;%
@@ -241,7 +370,7 @@ cars %&gt;%
 ```
 ]
  
-.panel2-95600-auto[
+.panel2-72793-auto[
 
 ```
    speed dist  slow
@@ -302,114 +431,200 @@ cars %&gt;%
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = .5) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+cars %&gt;%
+  mutate(slow = speed &lt; 15) %&gt;%
+  tail()
 ```
 ]
  
-.panel2-95600-auto[
-![](skeleton_files/figure-html/95600_auto_04_output-1.png)&lt;!-- --&gt;
+.panel2-72793-auto[
+
+```
+   speed dist  slow
+45    23   54 FALSE
+46    24   70 FALSE
+47    24   92 FALSE
+48    24   93 FALSE
+49    24  120 FALSE
+50    25   85 FALSE
+```
 ]
 
 ---
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = .5) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+cars %&gt;%
+  mutate(slow = speed &lt; 15) %&gt;%
+  tail() %&gt;%
+  .[,2]
 ```
 ]
  
-.panel2-95600-auto[
-![](skeleton_files/figure-html/95600_auto_05_output-1.png)&lt;!-- --&gt;
+.panel2-72793-auto[
+
+```
+[1]  54  70  92  93 120  85
+```
 ]
 
 ---
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
-ggplot(data = cars) +
-  aes(x = speed) +
-  aes(y = dist) +
-  geom_point(alpha = .5, size = 4) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+cars %&gt;%
+  mutate(slow = speed &lt; 15) %&gt;%
+  tail() %&gt;%
+  .[,2] %&gt;%
+  length()
 ```
 ]
  
-.panel2-95600-auto[
-![](skeleton_files/figure-html/95600_auto_06_output-1.png)&lt;!-- --&gt;
+.panel2-72793-auto[
+
+```
+[1] 6
+```
 ]
 
 ---
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(alpha = 2, size = 4) +
-  ggxmean::geom_lm() +
-  ggxmean::geom_lm_formula()
+  geom_point()
 ```
 ]
  
-.panel2-95600-auto[
-![](skeleton_files/figure-html/95600_auto_07_output-1.png)&lt;!-- --&gt;
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_08_output-1.png)&lt;!-- --&gt;
 ]
 
 ---
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(alpha = 2, size = 4,
+  geom_point(size = 4)
+```
+]
+ 
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_09_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-72793-auto[
+
+```r
+ggplot(data = cars) +
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_point(size = 4) +
+  ggxmean::geom_lm()
+```
+]
+ 
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_10_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-72793-auto[
+
+```r
+ggplot(data = cars) +
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_point(size = 4) +
+  ggxmean::geom_lm() +
+  ggxmean::geom_lm_formula()
+```
+]
+ 
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_11_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-72793-auto[
+
+```r
+ggplot(data = cars) +
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_point(alpha = .75,
+             size = 4) +
+  ggxmean::geom_lm() +
+  ggxmean::geom_lm_formula()
+```
+]
+ 
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_12_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-72793-auto[
+
+```r
+ggplot(data = cars) +
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_point(alpha = .75,
+             size = 4,
              color = "green") +
   ggxmean::geom_lm() +
   ggxmean::geom_lm_formula()
 ```
 ]
  
-.panel2-95600-auto[
-![](skeleton_files/figure-html/95600_auto_08_output-1.png)&lt;!-- --&gt;
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_13_output-1.png)&lt;!-- --&gt;
 ]
 
 ---
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
 
 ```r
 ggplot(data = cars) +
   aes(x = speed) +
   aes(y = dist) +
-  geom_point(alpha = 2, size = 4,
+  geom_point(alpha = .75, size = 4,
              color = "green",
              shape = "square") +
   ggxmean::geom_lm() +
@@ -417,22 +632,44 @@ ggplot(data = cars) +
 ```
 ]
  
-.panel2-95600-auto[
-![](skeleton_files/figure-html/95600_auto_09_output-1.png)&lt;!-- --&gt;
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_14_output-1.png)&lt;!-- --&gt;
 ]
 
 ---
 count: false
  
 
-.panel1-95600-auto[
+.panel1-72793-auto[
+
+```r
+ggplot(data = cars) +
+  aes(x = speed) +
+  aes(y = dist) +
+  geom_point(alpha = .75, size = 4,
+             color = "green",
+             shape = "square") +
+  ggxmean::geom_lm() +
+  ggxmean::geom_lm_formula(size = 8)
+```
+]
+ 
+.panel2-72793-auto[
+![](skeleton_files/figure-html/72793_auto_15_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-72793-auto[
 
 ```r
 ggplot() +
 ```
 ]
  
-.panel2-95600-auto[
+.panel2-72793-auto[
 
 ```
 Error: &lt;text&gt;:2:0: unexpected end of input
@@ -442,7 +679,7 @@ Error: &lt;text&gt;:2:0: unexpected end of input
 ]
 
 &lt;style&gt;
-.panel1-95600-auto {
+.panel1-72793-auto {
   color: black;
   width: 38.6060606060606%;
   hight: 32%;
@@ -450,7 +687,7 @@ Error: &lt;text&gt;:2:0: unexpected end of input
   padding-left: 1%;
   font-size: 80%
 }
-.panel2-95600-auto {
+.panel2-72793-auto {
   color: black;
   width: 59.3939393939394%;
   hight: 32%;
@@ -458,7 +695,7 @@ Error: &lt;text&gt;:2:0: unexpected end of input
   padding-left: 1%;
   font-size: 80%
 }
-.panel3-95600-auto {
+.panel3-72793-auto {
   color: black;
   width: NA%;
   hight: 33%;
