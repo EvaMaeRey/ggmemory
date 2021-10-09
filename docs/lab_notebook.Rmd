@@ -9,6 +9,8 @@ savehistory("temp_history.R") # nicely saves history...
 savehistory(file = ".Rhistory")
 loadhistory(file = ".Rhistory")
 
+
+
 # history(max.show = 25, reverse = FALSE, )
 ```
 
@@ -75,6 +77,11 @@ rstudioapi::executeCommand("reformatCode")
 code = "ggplot() +"
 sf <- srcfile(code)
 try(parse(text = code, srcfile = sf))
+utils::getParseData(sf)
+
+code = "ggplot() +"
+sf <- srcfile(code)
+parse(text = code, srcfile = sf)
 utils::getParseData(sf)
 ```
 

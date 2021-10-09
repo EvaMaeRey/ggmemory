@@ -1,0 +1,4628 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>A template for {ggmemory}</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Final package name TBD; candidates: {memory}, {instantreplay}, {replay}, {reminisce}, {rememberr}, lots of options" />
+    <script src="libs/header-attrs-2.6/header-attrs.js"></script>
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/hygge.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/ninjutsu.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# A template for {ggmemory}
+## parse data analytics interactive session history and relive it using xaringan and flipbookr
+### Final package name TBD; candidates: {memory}, {instantreplay}, {replay}, {reminisce}, {rememberr}, lots of options
+
+---
+
+
+
+## This package addresses the question: *Exactly how did we arrive at data analytic products (visualizations, summaries, models)?*
+
+--
+
+&lt;img src="https://media1.giphy.com/media/777Aby0ZetYE8/giphy.gif?cid=ecf05e47fxfri9ro2qxy8i7jhnalmh6lsnmpabijv8e8oo5n&amp;rid=giphy.gif&amp;ct=g" width="60%" /&gt;
+
+
+
+---
+
+
+
+```r
+# This is the recommended set up for this {memory} package
+# you might reset include = F for your book if you aren't wanting to communicate about knitr settings
+
+knitr::opts_chunk$set(fig.width = 6, message = FALSE, warning = FALSE,
+                      comment = "", cache = F, error = T)
+library(flipbookr)
+library(tidyverse)
+```
+
+```
+## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+```
+
+```
+## ✓ ggplot2 3.3.5     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.7
+## ✓ tidyr   1.0.2     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'tibble' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'purrr' was built under R version 3.6.2
+```
+
+```
+## Warning: package 'dplyr' was built under R version 3.6.2
+```
+
+```
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+```
+
+```r
+library(ggmemory)
+```
+
+---
+
+# Code preparation
+
+--
+
+## history to code a list of code snippits.
+
+---
+
+
+```r
+# formatting script is a bit manual at this point
+# Saved history in RStudio at least does not preserve user indentation
+# User may use savehistory(file = "my_history.R") to recall history, 
+# or send history manually from history pane to .R File
+# then w/ .R script of interest open, restore indentation 
+# (and get a lot of other nice formatting) via 
+# rstudioapi::executeCommand("reformatCode")
+# or Code -&gt; Reformat Code from RStudio GUI
+# here's the contents of one saved history that's been reformatted
+readLines("./ggplots_script.R")
+```
+
+```
+ [1] "library(tidyverse)"                  
+ [2] "1 + 1"                               
+ [3] "cars"                                
+ [4] "cars %&gt;%"                            
+ [5] "  mutate(slow = speed &lt; 15)"         
+ [6] "cars %&gt;%"                            
+ [7] "  mutate(slow = speed &lt; 15) %&gt;%"     
+ [8] "  tail()"                            
+ [9] "cars %&gt;%"                            
+[10] "  mutate(slow = speed &lt; 15) %&gt;%"     
+[11] "  tail() %&gt;%"                        
+[12] "  .[,2]"                             
+[13] "cars %&gt;%"                            
+[14] "  mutate(slow = speed &lt; 15) %&gt;%"     
+[15] "  tail() %&gt;%"                        
+[16] "  .[,2] %&gt;%"                         
+[17] "  length()"                          
+[18] "ggplot(data = cars) +"               
+[19] "  aes(x = speed) +"                  
+[20] "  aes(y = dist) +"                   
+[21] "  geom_point()"                      
+[22] "ggplot(data = cars) +"               
+[23] "  aes(x = speed) +"                  
+[24] "  aes(y = dist) +"                   
+[25] "  geom_point(size = 8)"              
+[26] "ggplot(data = cars) +"               
+[27] "  aes(x = speed) +"                  
+[28] "  aes(y = dist) +"                   
+[29] "  geom_point(size = 8) +"            
+[30] "  ggxmean::geom_lm()"                
+[31] "ggplot(data = cars) +"               
+[32] "  aes(x = speed) +"                  
+[33] "  aes(y = dist) +"                   
+[34] "  geom_point(size = 8) +"            
+[35] "  ggxmean::geom_lm() +"              
+[36] "  ggxmean::geom_lm_formula()"        
+[37] "ggplot(data = cars) +"               
+[38] "  aes(x = speed) +"                  
+[39] "  aes(y = dist) +"                   
+[40] "  geom_point(alpha = .5,"            
+[41] "             size = 8) +"            
+[42] "  ggxmean::geom_lm() +"              
+[43] "  ggxmean::geom_lm_formula()"        
+[44] "ggplot(data = cars) +"               
+[45] "  aes(x = speed) +"                  
+[46] "  aes(y = dist) +"                   
+[47] "  geom_point(alpha = .5,"            
+[48] "             size = 8,"              
+[49] "             color = \"green\") +"   
+[50] "  ggxmean::geom_lm() +"              
+[51] "  ggxmean::geom_lm_formula()"        
+[52] "ggplot(data = cars) +"               
+[53] "  aes(x = speed) +"                  
+[54] "  aes(y = dist) +"                   
+[55] "  geom_point(alpha = .5, size = 8,"  
+[56] "             color = \"green\","     
+[57] "             shape = \"square\") +"  
+[58] "  ggxmean::geom_lm() +"              
+[59] "  ggxmean::geom_lm_formula()"        
+[60] "ggplot(data = cars) +"               
+[61] "  aes(x = speed) +"                  
+[62] "  aes(y = dist) +"                   
+[63] "  geom_point(alpha = .5, size = 8,"  
+[64] "             color = \"green\","     
+[65] "             shape = \"square\") +"  
+[66] "  ggxmean::geom_lm() +"              
+[67] "  ggxmean::geom_lm_formula(size = 8)"
+[68] "ggplot() +"                          
+```
+
+
+---
+
+
+```r
+# then indentation will be ready for {memory}'s parsing
+formatted_history_script &lt;- "../R/my_history.R"
+
+# looks for pipelines starting with gg*
+my_executions &lt;- r_code_extract_code_list(script_path = formatted_history_script)
+
+my_executions
+```
+
+```
+[[1]]
+[1] "library(tidyverse)"
+
+[[2]]
+[1] "read_csv("                                                                                                 
+[2] "  \"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv\""
+
+[[3]]
+[1] ")"
+
+[[4]]
+[1] "nurses &lt;-"                                                                                                   
+[2] "  read_csv("                                                                                                 
+[3] "    \"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv\""
+[4] "  )"                                                                                                         
+
+[[5]]
+[1] "nurses"
+
+[[6]]
+[1] "nurses_raw &lt;-"                                                                                               
+[2] "  read_csv("                                                                                                 
+[3] "    \"https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv\""
+[4] "  )"                                                                                                         
+
+[[7]]
+[1] "nurses_raw"
+
+[[8]]
+[1] "nurses_raw %&gt;%"           "  janitor::clean_names()"
+
+[[9]]
+[1] "nurses_raw %&gt;%"              "  janitor::clean_names() -&gt;"
+[3] "  nurses"                   
+
+[[10]]
+[1] "nurses"
+
+[[11]]
+[1] "nurses %&gt;%" "  ggplot()"
+
+[[12]]
+[1] "nurses %&gt;%"      "  ggplot() +"    "  aes(x = year)"
+
+[[13]]
+[1] "nurses %&gt;%"                   "  ggplot() +"                
+[3] "  aes(x = year) +"            "  aes(y = total_employed_rn)"
+
+[[14]]
+[1] "nurses %&gt;%"                     "  ggplot() +"                  
+[3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+[5] "  geom_point()"                
+
+[[15]]
+[1] "nurses %&gt;%"                     "  ggplot() +"                  
+[3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+[5] "  geom_point(size = 4)"        
+
+[[16]]
+[1] "nurses %&gt;%"                     "  ggplot() +"                  
+[3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+[5] "  geom_point(size = 4,"         "             alpha = .4)"      
+
+[[17]]
+[1] "nurses %&gt;%"                     "  ggplot() +"                  
+[3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+[5] "  geom_point(size = 4,"         "             alpha = .4) +"    
+[7] "  scale_y_log10()"             
+
+[[18]]
+[1] "option(scipen = 10)"
+
+[[19]]
+[1] "options(scipen = 10)"
+
+[[20]]
+[1] "nurses %&gt;%"                     "  ggplot() +"                  
+[3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+[5] "  geom_point(size = 4,"         "             alpha = .4) +"    
+[7] "  scale_y_log10()"             
+
+[[21]]
+[1] "nurses %&gt;%"                     "  ggplot() +"                  
+[3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+[5] "  geom_point(size = 4,"         "             alpha = .4,"      
+[7] "             shape = 21) +"     "  scale_y_log10()"             
+
+[[22]]
+ [1] "nurses %&gt;%"                     "  ggplot() +"                  
+ [3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+ [5] "  geom_point("                  "    size = 4,"                 
+ [7] "    alpha = .4,"                "    shape = 21,"               
+ [9] "    fill = \"magenta\""         "  ) +"                         
+[11] "  scale_y_log10()"             
+
+[[23]]
+ [1] "nurses %&gt;%"                     "  ggplot() +"                  
+ [3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+ [5] "  geom_point("                  "    size = 4,"                 
+ [7] "    alpha = .4,"                "    shape = 21,"               
+ [9] "    fill = \"magenta\","        "    color = \"white\""         
+[11] "  ) +"                          "  scale_y_log10()"             
+
+[[24]]
+ [1] "nurses %&gt;%"                     "  ggplot() +"                  
+ [3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+ [5] "  geom_point("                  "    size = 4,"                 
+ [7] "    alpha = .7,"                "    shape = 21,"               
+ [9] "    fill = \"magenta\","        "    color = \"white\""         
+[11] "  ) +"                          "  scale_y_log10()"             
+
+[[25]]
+ [1] "nurses %&gt;%"                     "  ggplot() +"                  
+ [3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+ [5] "  geom_line() +"                "  geom_point("                 
+ [7] "    size = 4,"                  "    alpha = .7,"               
+ [9] "    shape = 21,"                "    fill = \"magenta\","       
+[11] "    color = \"white\""          "  ) +"                         
+[13] "  scale_y_log10()"             
+
+[[26]]
+ [1] "nurses %&gt;%"                     "  ggplot() +"                  
+ [3] "  aes(x = year) +"              "  aes(y = total_employed_rn) +"
+ [5] "  aes(group = state) +"         "  geom_line() +"               
+ [7] "  geom_point("                  "    size = 4,"                 
+ [9] "    alpha = .7,"                "    shape = 21,"               
+[11] "    fill = \"magenta\","        "    color = \"white\""         
+[13] "  ) +"                          "  scale_y_log10()"             
+
+[[27]]
+ [1] "nurses %&gt;%"                         "  ggplot() +"                      
+ [3] "  aes(x = year) +"                  "  aes(y = total_employed_rn) +"    
+ [5] "  aes(group = state) +"             "  geom_line(color = \"magenta\") +"
+ [7] "  geom_point("                      "    size = 4,"                     
+ [9] "    alpha = .7,"                    "    shape = 21,"                   
+[11] "    fill = \"magenta\","            "    color = \"white\""             
+[13] "  ) +"                              "  scale_y_log10()"                 
+
+[[28]]
+ [1] "nurses %&gt;%"                         "  ggplot() +"                      
+ [3] "  aes(x = year) +"                  "  aes(y = total_employed_rn) +"    
+ [5] "  aes(group = state) +"             "  geom_line(color = \"magenta\") +"
+ [7] "  geom_point("                      "    size = 4,"                     
+ [9] "    alpha = .7,"                    "    shape = 21,"                   
+[11] "    fill = \"magenta\","            "    color = \"white\""             
+[13] "  ) +"                              "  scale_y_log10() +"               
+[15] "  facet_wrap(facets = state)"      
+
+[[29]]
+ [1] "nurses %&gt;%"                         "  ggplot() +"                      
+ [3] "  aes(x = year) +"                  "  aes(y = total_employed_rn) +"    
+ [5] "  aes(group = state) +"             "  geom_line(color = \"magenta\") +"
+ [7] "  geom_point("                      "    size = 4,"                     
+ [9] "    alpha = .7,"                    "    shape = 21,"                   
+[11] "    fill = \"magenta\","            "    color = \"white\""             
+[13] "  ) +"                              "  scale_y_log10() +"               
+[15] "  facet_wrap(facets = vars(state))"
+
+[[30]]
+[1] "nurses %&gt;%"                             
+[2] "  filter(state != \"Guam\" &amp;"           
+[3] "           state != \"Virgin Islands\")"
+
+[[31]]
+ [1] "nurses %&gt;%"                                 
+ [2] "  filter(state != \"Guam\" &amp;"               
+ [3] "           state != \"Virgin Islands\") %&gt;%"
+ [4] "  ggplot() +"                               
+ [5] "  aes(x = year) +"                          
+ [6] "  aes(y = total_employed_rn) +"             
+ [7] "  aes(group = state) +"                     
+ [8] "  geom_line(color = \"magenta\") +"         
+ [9] "  geom_point("                              
+[10] "    size = 4,"                              
+[11] "    alpha = .7,"                            
+[12] "    shape = 21,"                            
+[13] "    fill = \"magenta\","                    
+[14] "    color = \"white\""                      
+[15] "  ) +"                                      
+[16] "  scale_y_log10() +"                        
+[17] "  facet_wrap(facets = vars(state))"         
+
+[[32]]
+ [1] "nurses %&gt;%"                                 
+ [2] "  filter(state != \"Guam\" &amp;"               
+ [3] "           state != \"Virgin Islands\") %&gt;%"
+ [4] "  ggplot() +"                               
+ [5] "  aes(x = year) +"                          
+ [6] "  aes(y = hourly_wage_avg) +"               
+ [7] "  aes(group = state) +"                     
+ [8] "  geom_line(color = \"magenta\") +"         
+ [9] "  geom_point("                              
+[10] "    size = 4,"                              
+[11] "    alpha = .7,"                            
+[12] "    shape = 21,"                            
+[13] "    fill = \"magenta\","                    
+[14] "    color = \"white\""                      
+[15] "  ) +"                                      
+[16] "  scale_y_log10() +"                        
+[17] "  facet_wrap(facets = vars(state))"         
+
+[[33]]
+ [1] "nurses %&gt;%"                                 
+ [2] "  filter(state != \"Guam\" &amp;"               
+ [3] "           state != \"Virgin Islands\") %&gt;%"
+ [4] "  ggplot() +"                               
+ [5] "  aes(x = year) +"                          
+ [6] "  aes(y = hourly_wage_avg) +"               
+ [7] "  aes(group = state) +"                     
+ [8] "  geom_line(color = \"magenta\") +"         
+ [9] "  geom_point("                              
+[10] "    size = 4,"                              
+[11] "    alpha = .7,"                            
+[12] "    shape = 21,"                            
+[13] "    fill = \"magenta\","                    
+[14] "    color = \"white\""                      
+[15] "  ) +"                                      
+[16] "  facet_wrap(facets = vars(state))"         
+
+[[34]]
+[1] "nurses %&gt;%"                                 
+[2] "  filter(state != \"Guam\" &amp;"               
+[3] "           state != \"Virgin Islands\") %&gt;%"
+[4] "  filter(year %in% range(year))"            
+
+[[35]]
+[1] "nurses %&gt;%"                                 
+[2] "  filter(state != \"Guam\" &amp;"               
+[3] "           state != \"Virgin Islands\") %&gt;%"
+[4] "  filter(year %in% range(year)) %&gt;%"        
+[5] "  select(state, year, hourly_wage_median)"  
+
+[[36]]
+[1] "nurses %&gt;%"                                                        
+[2] "  filter(state != \"Guam\" &amp;"                                      
+[3] "           state != \"Virgin Islands\") %&gt;%"                       
+[4] "  filter(year %in% range(year)) %&gt;%"                               
+[5] "  select(state, year, hourly_wage_median) %&gt;%"                     
+[6] "  pivot_wider(names_from = year, values_from = hourly_wage_median)"
+
+[[37]]
+[1] "nurses %&gt;%"                                                            
+[2] "  filter(state != \"Guam\" &amp;"                                          
+[3] "           state != \"Virgin Islands\") %&gt;%"                           
+[4] "  filter(year %in% range(year)) %&gt;%"                                   
+[5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+[6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+[7] "  ggplot() +"                                                          
+[8] "  aes(x = 1998, y = 2020) +"                                           
+[9] "  geom_point()"                                                        
+
+[[38]]
+[1] "nurses %&gt;%"                                                            
+[2] "  filter(state != \"Guam\" &amp;"                                          
+[3] "           state != \"Virgin Islands\") %&gt;%"                           
+[4] "  filter(year %in% range(year)) %&gt;%"                                   
+[5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+[6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+[7] "  ggplot() +"                                                          
+[8] "  aes(x = `1998`, y = `2020`) +"                                       
+[9] "  geom_point()"                                                        
+
+[[39]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1, intercept = 0)"                               
+
+[[40]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\")"                                  
+
+[[41]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal()"                                                       
+
+[[42]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60))"                                        
+
+[[43]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30))"                                        
+
+[[44]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage\")"                                
+
+[[45]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\")"                 
+
+[[46]]
+[1] "nurses %&gt;%"                                                            
+[2] "  filter(state != \"Guam\" &amp;"                                          
+[3] "           state != \"Virgin Islands\") %&gt;%"                           
+[4] "  filter(year %in% range(year)) %&gt;%"                                   
+[5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+[6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+[7] "  ggplot() +"                                                          
+[8] "  aes(x = `1998`, y = state)"                                          
+
+[[47]]
+[1] "nurses %&gt;%"                                                            
+[2] "  filter(state != \"Guam\" &amp;"                                          
+[3] "           state != \"Virgin Islands\") %&gt;%"                           
+[4] "  filter(year %in% range(year)) %&gt;%"                                   
+[5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+[6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+[7] "  ggplot() +"                                                          
+[8] "  aes(x = `1998`, y = state) +"                                        
+[9] "  geom_point(color = \"plum2\")"                                       
+
+[[48]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum2\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`))"                                    
+
+[[49]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum2\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`, yend = state))"                      
+
+[[50]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum2\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`, yend = state,"                       
+[11] "                   color = \"plum2\"))"                                
+
+[[51]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum2\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`, yend = state), color = \"plum2\")"   
+
+[[52]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum2\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`, yend = state), color = \"plum2\") +" 
+[11] "  geom_point(aes(x = `2020`))"                                         
+
+[[53]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum2\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`, yend = state), color = \"plum2\") +" 
+[11] "  geom_point(aes(x = `2020`),"                                         
+[12] "             color = \"plum4\")"                                       
+
+[[54]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = state) +"                                        
+ [9] "  geom_point(color = \"plum3\") +"                                     
+[10] "  geom_segment(aes(xend = `2020`, yend = state), color = \"plum3\") +" 
+[11] "  geom_point(aes(x = `2020`),"                                         
+[12] "             color = \"plum4\")"                                       
+
+[[55]]
+[1] "nurses %&gt;%"                                                            
+[2] "  filter(state != \"Guam\" &amp;"                                          
+[3] "           state != \"Virgin Islands\" &amp;"                              
+[4] "           state != \"Puerto Rico\") %&gt;%"                              
+[5] "  filter(year %in% range(year)) %&gt;%"                                   
+[6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+[7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+[8] "  mutate(state = fct)"                                                 
+
+[[56]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = state) +"                                        
+[10] "  geom_point(color = \"plum3\") +"                                     
+[11] "  geom_segment(aes(xend = `2020`, yend = state), color = \"plum3\") +" 
+[12] "  geom_point(aes(x = `2020`),"                                         
+[13] "             color = \"plum4\")"                                       
+
+[[57]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  arrange(`1998`) %&gt;%"                                                 
+ [9] "  mutate(state = fct_inorder(state)) %&gt;%"                              
+[10] "  ggplot() +"                                                          
+[11] "  aes(x = `1998`, y = state) +"                                        
+[12] "  geom_point(color = \"plum3\") +"                                     
+[13] "  geom_segment(aes(xend = `2020`, yend = state), color = \"plum3\") +" 
+[14] "  geom_point(aes(x = `2020`),"                                         
+[15] "             color = \"plum4\")"                                       
+
+[[58]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\")"                 
+
+[[59]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(xend = `1998`, yend = 0)"                               
+
+[[60]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0))"                          
+
+[[61]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")"                                      
+
+[[62]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"darkgrey\")"                                  
+
+[[63]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\")"                                    
+
+[[64]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  ggxmean::geom_lm()"                                                  
+
+[[65]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 60)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  ggxmean::geom_lm()"                                                  
+
+[[66]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_point() +"                                                      
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 30)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  ggxmean::geom_lm()"                                                  
+
+[[67]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 30)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm()"                                                  
+
+[[68]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 30)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm() +"                                                
+[21] "  labs(x = \"Hourly wage in 1998, $US\")"                              
+
+[[69]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 30)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm() +"                                                
+[21] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[22] "  labs(y = \"Hourly wage in 1998, $US\")"                              
+
+[[70]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 40)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm() +"                                                
+[21] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[22] "  labs(y = \"Hourly wage in 1998, $US\")"                              
+
+[[71]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 40)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm() +"                                                
+[21] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[22] "  labs(y = \"Hourly wage in 1998, $US\") +"                            
+[23] "  ggpmisc::stat_dens2d_filter(geom = \"text_repel\","                  
+[24] "                              keep.fraction = 0.25)"                   
+
+[[72]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 40)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm() +"                                                
+[21] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[22] "  labs(y = \"Hourly wage in 1998, $US\") +"                            
+[23] "  ggrepel::geom_text_repel()"                                          
+
+[[73]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\") %&gt;%"                           
+ [4] "  filter(year %in% range(year)) %&gt;%"                                   
+ [5] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [6] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [7] "  ggplot() +"                                                          
+ [8] "  aes(x = `1998`, y = `2020`) +"                                       
+ [9] "  geom_abline(slope = 1,"                                              
+[10] "              intercept = 0,"                                          
+[11] "              linetype = \"dashed\") +"                                
+[12] "  coord_equal(ylim = c(0, 60),"                                        
+[13] "              xlim = c(0, 40)) +"                                      
+[14] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[15] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[16] "               color = \"grey\")  +"                                   
+[17] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[18] "               color = \"grey35\") +"                                  
+[19] "  geom_point() +"                                                      
+[20] "  ggxmean::geom_lm() +"                                                
+[21] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[22] "  labs(y = \"Hourly wage in 1998, $US\") +"                            
+[23] "  ggrepel::geom_text_repel(aes(label = state))"                        
+
+[[74]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 1998, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state))"                        
+
+[[75]]
+ [1] "nurses %&gt;%"                                                               
+ [2] "  filter(state != \"Guam\" &amp;"                                             
+ [3] "           state != \"Virgin Islands\" &amp;"                                 
+ [4] "           state != \"Puerto Rico\") %&gt;%"                                 
+ [5] "  filter(year %in% range(year)) %&gt;%"                                      
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                            
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"   
+ [8] "  ggplot() +"                                                             
+ [9] "  aes(x = `1998`, y = `2020`) +"                                          
+[10] "  geom_abline(slope = 1,"                                                 
+[11] "              intercept = 0,"                                             
+[12] "              linetype = \"dashed\") +"                                   
+[13] "  coord_equal(ylim = c(0, 60),"                                           
+[14] "              xlim = c(0, 40)) +"                                         
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"                  
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                             
+[17] "               color = \"grey\")  +"                                      
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                        
+[19] "               color = \"grey35\") +"                                     
+[20] "  geom_point() +"                                                         
+[21] "  ggxmean::geom_lm() +"                                                   
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                               
+[23] "  labs(y = \"Hourly wage in 1998, $US\") +"                               
+[24] "  ggpmisc::stat_dens2d_filter(geom = \"text_repel\", keep.fraction = 0.5)"
+
+[[76]]
+[1] "install.packages(\"ggpmisc\")"
+
+[[77]]
+[1] "install.packages(\"ggpmisc\")"
+
+[[78]]
+ [1] "nurses %&gt;%"                                                               
+ [2] "  filter(state != \"Guam\" &amp;"                                             
+ [3] "           state != \"Virgin Islands\" &amp;"                                 
+ [4] "           state != \"Puerto Rico\") %&gt;%"                                 
+ [5] "  filter(year %in% range(year)) %&gt;%"                                      
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                            
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"   
+ [8] "  ggplot() +"                                                             
+ [9] "  aes(x = `1998`, y = `2020`) +"                                          
+[10] "  geom_abline(slope = 1,"                                                 
+[11] "              intercept = 0,"                                             
+[12] "              linetype = \"dashed\") +"                                   
+[13] "  coord_equal(ylim = c(0, 60),"                                           
+[14] "              xlim = c(0, 40)) +"                                         
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"                  
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                             
+[17] "               color = \"grey\")  +"                                      
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                        
+[19] "               color = \"grey35\") +"                                     
+[20] "  geom_point() +"                                                         
+[21] "  ggxmean::geom_lm() +"                                                   
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                               
+[23] "  labs(y = \"Hourly wage in 1998, $US\") +"                               
+[24] "  ggpmisc::stat_dens2d_filter(geom = \"text_repel\", keep.fraction = 0.5)"
+
+[[79]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 1998, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state),"                        
+[25] "                           data = . %&gt;% sample_frac(.2))"              
+
+[[80]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state),"                        
+[25] "                           data = . %&gt;% sample_frac(.2))"              
+
+[[81]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12)),"                       
+[26] "                           data = . %&gt;% sample_frac(.2))"              
+
+[[82]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2))"              
+
+[[83]]
+[1] "state"
+
+[[84]]
+[1] "state.abb"
+
+[[85]]
+[1] "state.name"
+
+[[86]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format())"                
+
+[[87]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[29] "  scale_x_continuous(labels = scales::dollar_format())"                
+
+[[88]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[29] "  scale_x_continuous(labels = scales::dollar_format()) +"              
+[30] "  theme_minimal()"                                                     
+
+[[89]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[29] "  scale_x_continuous(labels = scales::dollar_format()) +"              
+[30] "  theme_minimal() +"                                                   
+[31] "  ggstamp::stamp_arrow(x = 35,"                                        
+[32] "                       y = 35,"                                        
+[33] "                       xend = 35,"                                     
+[34] "                       yend = 50)"                                     
+
+[[90]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[29] "  scale_x_continuous(labels = scales::dollar_format()) +"              
+[30] "  theme_minimal() +"                                                   
+[31] "  ggstamp::stamp_arrow("                                               
+[32] "    x = 35,"                                                           
+[33] "    y = 35,"                                                           
+[34] "    xend = 35,"                                                        
+[35] "    yend = 60,"                                                        
+[36] "    size = 1"                                                          
+[37] "  )"                                                                   
+
+[[91]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[29] "  scale_x_continuous(labels = scales::dollar_format()) +"              
+[30] "  theme_minimal() +"                                                   
+[31] "  ggstamp::stamp_arrow("                                               
+[32] "    x = 35,"                                                           
+[33] "    y = 35,"                                                           
+[34] "    xend = 35,"                                                        
+[35] "    yend = 60,"                                                        
+[36] "    size = .5"                                                         
+[37] "  ) +"                                                                 
+[38] "  ggstamp::stamp_text("                                                
+[39] "    x = 38,"                                                           
+[40] "    y = 50,"                                                           
+[41] "    size = 4,"                                                         
+[42] "    label = \"Gain median wage\","                                     
+[43] "    angle = 90"                                                        
+[44] "  )"                                                                   
+
+[[92]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\") +"               
+[16] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[17] "               color = \"grey\")  +"                                   
+[18] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[19] "               color = \"grey35\") +"                                  
+[20] "  geom_point() +"                                                      
+[21] "  ggxmean::geom_lm() +"                                                
+[22] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[23] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[24] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[25] "                                 str_wrap(12),"                        
+[26] "                               lineheight = .8),"                      
+[27] "                           data = . %&gt;% sample_frac(.2)) +"            
+[28] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[29] "  scale_x_continuous(labels = scales::dollar_format()) +"              
+[30] "  theme_minimal() +"                                                   
+[31] "  ggstamp::stamp_arrow("                                               
+[32] "    x = 35,"                                                           
+[33] "    y = 35,"                                                           
+[34] "    xend = 35,"                                                        
+[35] "    yend = 60,"                                                        
+[36] "    size = .5"                                                         
+[37] "  ) +"                                                                 
+[38] "  ggstamp::stamp_text("                                                
+[39] "    x = 38,"                                                           
+[40] "    y = 50,"                                                           
+[41] "    char_width = 12,"                                                  
+[42] "    size = 4,"                                                         
+[43] "    label = \"Gain median wage\","                                     
+[44] "    angle = -90"                                                       
+[45] "  )"                                                                   
+
+[[93]]
+[1] "nurses %&gt;%"                                                        
+[2] "  filter(state != \"Guam\" &amp;"                                      
+[3] "           state != \"Virgin Islands\" &amp;"                          
+[4] "           state != \"Puerto Rico\") %&gt;%"                          
+[5] "  filter(year %in% range(year)) %&gt;%"                               
+[6] "  select(state, year, hourly_wage_median) %&gt;%"                     
+[7] "  pivot_wider(names_from = year, values_from = hourly_wage_median)"
+
+[[94]]
+ [1] "nurses %&gt;%"                                                            
+ [2] "  filter(state != \"Guam\" &amp;"                                          
+ [3] "           state != \"Virgin Islands\" &amp;"                              
+ [4] "           state != \"Puerto Rico\") %&gt;%"                              
+ [5] "  filter(year %in% range(year)) %&gt;%"                                   
+ [6] "  select(state, year, hourly_wage_median) %&gt;%"                         
+ [7] "  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%"
+ [8] "  ggplot() +"                                                          
+ [9] "  aes(x = `1998`, y = `2020`) +"                                       
+[10] "  geom_abline(slope = 1,"                                              
+[11] "              intercept = 0,"                                          
+[12] "              linetype = \"dashed\") +"                                
+[13] "  coord_equal(ylim = c(0, 60),"                                        
+[14] "              xlim = c(0, 40)) +"                                      
+[15] "  labs(title = \"Median hourly wage, 1998 and 2020\","                 
+[16] "       subtitle = \"50 US States and District of Columbia\") +"        
+[17] "  geom_segment(aes(xend = `1998`, yend = 0),"                          
+[18] "               color = \"grey\")  +"                                   
+[19] "  geom_segment(aes(xend = `1998`, yend = `1998`),"                     
+[20] "               color = \"grey35\") +"                                  
+[21] "  geom_point() +"                                                      
+[22] "  ggxmean::geom_lm() +"                                                
+[23] "  labs(x = \"Hourly wage in 1998, $US\") +"                            
+[24] "  labs(y = \"Hourly wage in 2020, $US\") +"                            
+[25] "  ggrepel::geom_text_repel(aes(label = state %&gt;%"                      
+[26] "                                 str_wrap(12),"                        
+[27] "                               lineheight = .8),"                      
+[28] "                           data = . %&gt;% sample_frac(.2)) +"            
+[29] "  scale_y_continuous(labels = scales::dollar_format()) +"              
+[30] "  scale_x_continuous(labels = scales::dollar_format()) +"              
+[31] "  theme_minimal() +"                                                   
+[32] "  ggstamp::stamp_arrow("                                               
+[33] "    x = 35,"                                                           
+[34] "    y = 35,"                                                           
+[35] "    xend = 35,"                                                        
+[36] "    yend = 60,"                                                        
+[37] "    size = .75"                                                        
+[38] "  ) +"                                                                 
+[39] "  ggstamp::stamp_text("                                                
+[40] "    x = 38,"                                                           
+[41] "    y = 50,"                                                           
+[42] "    char_width = 12,"                                                  
+[43] "    size = 4,"                                                         
+[44] "    label = \"Gain median wage\","                                     
+[45] "    angle = -90"                                                       
+[46] "  )"                                                                   
+```
+
+---
+class: inverse, middle, center
+
+
+# Reviewing code
+
+--
+
+## inline code is used to deliver each element of code sequence to a slide w/ associated output:
+
+--
+
+## `flipbookr::chunk_reveal(code_seq = my_executions)`
+
+
+---
+
+
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+library(tidyverse)
+```
+]
+ 
+.panel2-2354-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+read_csv(
+  "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv"
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: &lt;text&gt;:3:0: unexpected end of input
+1: read_csv(
+2:   "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv"
+  ^
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: &lt;text&gt;:1:1: unexpected ')'
+1: )
+    ^
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses &lt;-
+  read_csv(
+    "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv"
+  )
+```
+]
+ 
+.panel2-2354-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 1,242 x 22
+   State          Year `Total Employed … `Employed Standard Er… `Hourly Wage Av…
+   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;                  &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Alabama        2020             48850                    2.9             29.0
+ 2 Alaska         2020              6240                   13               45.8
+ 3 Arizona        2020             55520                    3.7             38.6
+ 4 Arkansas       2020             25300                    4.2             30.6
+ 5 California     2020            307060                    2               58.0
+ 6 Colorado       2020             52330                    2.8             37.4
+ 7 Connecticut    2020             33400                    6.5             40.8
+ 8 Delaware       2020             11410                   11.4             35.7
+ 9 District of …  2020             10320                    1.2             43.3
+10 Florida        2020            183130                    2.2             33.4
+# … with 1,232 more rows, and 17 more variables: Hourly Wage Median &lt;dbl&gt;,
+#   Annual Salary Avg &lt;dbl&gt;, Annual Salary Median &lt;dbl&gt;,
+#   Wage/Salary standard error (%) &lt;dbl&gt;, Hourly 10th Percentile &lt;dbl&gt;,
+#   Hourly 25th Percentile &lt;dbl&gt;, Hourly 75th Percentile &lt;dbl&gt;,
+#   Hourly 90th Percentile &lt;dbl&gt;, Annual 10th Percentile &lt;dbl&gt;,
+#   Annual 25th Percentile &lt;dbl&gt;, Annual 75th Percentile &lt;dbl&gt;,
+#   Annual 90th Percentile &lt;dbl&gt;, Location Quotient &lt;dbl&gt;,
+#   Total Employed (National)_Aggregate &lt;dbl&gt;,
+#   Total Employed (Healthcare, National)_Aggregate &lt;dbl&gt;,
+#   Total Employed (Healthcare, State)_Aggregate &lt;dbl&gt;,
+#   Yearly Total Employed (State)_Aggregate &lt;dbl&gt;
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses_raw &lt;-
+  read_csv(
+    "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-10-05/nurses.csv"
+  )
+```
+]
+ 
+.panel2-2354-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses_raw
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 1,242 x 22
+   State          Year `Total Employed … `Employed Standard Er… `Hourly Wage Av…
+   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;                  &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Alabama        2020             48850                    2.9             29.0
+ 2 Alaska         2020              6240                   13               45.8
+ 3 Arizona        2020             55520                    3.7             38.6
+ 4 Arkansas       2020             25300                    4.2             30.6
+ 5 California     2020            307060                    2               58.0
+ 6 Colorado       2020             52330                    2.8             37.4
+ 7 Connecticut    2020             33400                    6.5             40.8
+ 8 Delaware       2020             11410                   11.4             35.7
+ 9 District of …  2020             10320                    1.2             43.3
+10 Florida        2020            183130                    2.2             33.4
+# … with 1,232 more rows, and 17 more variables: Hourly Wage Median &lt;dbl&gt;,
+#   Annual Salary Avg &lt;dbl&gt;, Annual Salary Median &lt;dbl&gt;,
+#   Wage/Salary standard error (%) &lt;dbl&gt;, Hourly 10th Percentile &lt;dbl&gt;,
+#   Hourly 25th Percentile &lt;dbl&gt;, Hourly 75th Percentile &lt;dbl&gt;,
+#   Hourly 90th Percentile &lt;dbl&gt;, Annual 10th Percentile &lt;dbl&gt;,
+#   Annual 25th Percentile &lt;dbl&gt;, Annual 75th Percentile &lt;dbl&gt;,
+#   Annual 90th Percentile &lt;dbl&gt;, Location Quotient &lt;dbl&gt;,
+#   Total Employed (National)_Aggregate &lt;dbl&gt;,
+#   Total Employed (Healthcare, National)_Aggregate &lt;dbl&gt;,
+#   Total Employed (Healthcare, State)_Aggregate &lt;dbl&gt;,
+#   Yearly Total Employed (State)_Aggregate &lt;dbl&gt;
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses_raw %&gt;%
+  janitor::clean_names()
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 1,242 x 22
+   state          year total_employed_rn employed_standard_erro… hourly_wage_avg
+   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;                   &lt;dbl&gt;           &lt;dbl&gt;
+ 1 Alabama        2020             48850                     2.9            29.0
+ 2 Alaska         2020              6240                    13              45.8
+ 3 Arizona        2020             55520                     3.7            38.6
+ 4 Arkansas       2020             25300                     4.2            30.6
+ 5 California     2020            307060                     2              58.0
+ 6 Colorado       2020             52330                     2.8            37.4
+ 7 Connecticut    2020             33400                     6.5            40.8
+ 8 Delaware       2020             11410                    11.4            35.7
+ 9 District of …  2020             10320                     1.2            43.3
+10 Florida        2020            183130                     2.2            33.4
+# … with 1,232 more rows, and 17 more variables: hourly_wage_median &lt;dbl&gt;,
+#   annual_salary_avg &lt;dbl&gt;, annual_salary_median &lt;dbl&gt;,
+#   wage_salary_standard_error_percent &lt;dbl&gt;, hourly_10th_percentile &lt;dbl&gt;,
+#   hourly_25th_percentile &lt;dbl&gt;, hourly_75th_percentile &lt;dbl&gt;,
+#   hourly_90th_percentile &lt;dbl&gt;, annual_10th_percentile &lt;dbl&gt;,
+#   annual_25th_percentile &lt;dbl&gt;, annual_75th_percentile &lt;dbl&gt;,
+#   annual_90th_percentile &lt;dbl&gt;, location_quotient &lt;dbl&gt;,
+#   total_employed_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_state_aggregate &lt;dbl&gt;,
+#   yearly_total_employed_state_aggregate &lt;dbl&gt;
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses_raw %&gt;%
+  janitor::clean_names() -&gt;
+  nurses
+```
+]
+ 
+.panel2-2354-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 1,242 x 22
+   state          year total_employed_rn employed_standard_erro… hourly_wage_avg
+   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;                   &lt;dbl&gt;           &lt;dbl&gt;
+ 1 Alabama        2020             48850                     2.9            29.0
+ 2 Alaska         2020              6240                    13              45.8
+ 3 Arizona        2020             55520                     3.7            38.6
+ 4 Arkansas       2020             25300                     4.2            30.6
+ 5 California     2020            307060                     2              58.0
+ 6 Colorado       2020             52330                     2.8            37.4
+ 7 Connecticut    2020             33400                     6.5            40.8
+ 8 Delaware       2020             11410                    11.4            35.7
+ 9 District of …  2020             10320                     1.2            43.3
+10 Florida        2020            183130                     2.2            33.4
+# … with 1,232 more rows, and 17 more variables: hourly_wage_median &lt;dbl&gt;,
+#   annual_salary_avg &lt;dbl&gt;, annual_salary_median &lt;dbl&gt;,
+#   wage_salary_standard_error_percent &lt;dbl&gt;, hourly_10th_percentile &lt;dbl&gt;,
+#   hourly_25th_percentile &lt;dbl&gt;, hourly_75th_percentile &lt;dbl&gt;,
+#   hourly_90th_percentile &lt;dbl&gt;, annual_10th_percentile &lt;dbl&gt;,
+#   annual_25th_percentile &lt;dbl&gt;, annual_75th_percentile &lt;dbl&gt;,
+#   annual_90th_percentile &lt;dbl&gt;, location_quotient &lt;dbl&gt;,
+#   total_employed_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_state_aggregate &lt;dbl&gt;,
+#   yearly_total_employed_state_aggregate &lt;dbl&gt;
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_11_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_12_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_13_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_14_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(size = 4)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_15_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(size = 4,
+             alpha = .4)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_16_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(size = 4,
+             alpha = .4) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_17_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+option(scipen = 10)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error in option(scipen = 10): could not find function "option"
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+options(scipen = 10)
+```
+]
+ 
+.panel2-2354-auto[
+
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(size = 4,
+             alpha = .4) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_20_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(size = 4,
+             alpha = .4,
+             shape = 21) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_21_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(
+    size = 4,
+    alpha = .4,
+    shape = 21,
+    fill = "magenta"
+  ) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_22_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(
+    size = 4,
+    alpha = .4,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_23_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_24_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  geom_line() +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_25_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  aes(group = state) +
+  geom_line() +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_26_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  aes(group = state) +
+  geom_line(color = "magenta") +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_27_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  aes(group = state) +
+  geom_line(color = "magenta") +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10() +
+  facet_wrap(facets = state)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error in validate_facets(x): object 'state' not found
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  aes(group = state) +
+  geom_line(color = "magenta") +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10() +
+  facet_wrap(facets = vars(state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_29_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands")
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 1,196 x 22
+   state          year total_employed_rn employed_standard_erro… hourly_wage_avg
+   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;                   &lt;dbl&gt;           &lt;dbl&gt;
+ 1 Alabama        2020             48850                     2.9            29.0
+ 2 Alaska         2020              6240                    13              45.8
+ 3 Arizona        2020             55520                     3.7            38.6
+ 4 Arkansas       2020             25300                     4.2            30.6
+ 5 California     2020            307060                     2              58.0
+ 6 Colorado       2020             52330                     2.8            37.4
+ 7 Connecticut    2020             33400                     6.5            40.8
+ 8 Delaware       2020             11410                    11.4            35.7
+ 9 District of …  2020             10320                     1.2            43.3
+10 Florida        2020            183130                     2.2            33.4
+# … with 1,186 more rows, and 17 more variables: hourly_wage_median &lt;dbl&gt;,
+#   annual_salary_avg &lt;dbl&gt;, annual_salary_median &lt;dbl&gt;,
+#   wage_salary_standard_error_percent &lt;dbl&gt;, hourly_10th_percentile &lt;dbl&gt;,
+#   hourly_25th_percentile &lt;dbl&gt;, hourly_75th_percentile &lt;dbl&gt;,
+#   hourly_90th_percentile &lt;dbl&gt;, annual_10th_percentile &lt;dbl&gt;,
+#   annual_25th_percentile &lt;dbl&gt;, annual_75th_percentile &lt;dbl&gt;,
+#   annual_90th_percentile &lt;dbl&gt;, location_quotient &lt;dbl&gt;,
+#   total_employed_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_state_aggregate &lt;dbl&gt;,
+#   yearly_total_employed_state_aggregate &lt;dbl&gt;
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = total_employed_rn) +
+  aes(group = state) +
+  geom_line(color = "magenta") +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10() +
+  facet_wrap(facets = vars(state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_31_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = hourly_wage_avg) +
+  aes(group = state) +
+  geom_line(color = "magenta") +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  scale_y_log10() +
+  facet_wrap(facets = vars(state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_32_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  ggplot() +
+  aes(x = year) +
+  aes(y = hourly_wage_avg) +
+  aes(group = state) +
+  geom_line(color = "magenta") +
+  geom_point(
+    size = 4,
+    alpha = .7,
+    shape = 21,
+    fill = "magenta",
+    color = "white"
+  ) +
+  facet_wrap(facets = vars(state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_33_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year))
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 104 x 22
+   state          year total_employed_rn employed_standard_erro… hourly_wage_avg
+   &lt;chr&gt;         &lt;dbl&gt;             &lt;dbl&gt;                   &lt;dbl&gt;           &lt;dbl&gt;
+ 1 Alabama        2020             48850                     2.9            29.0
+ 2 Alaska         2020              6240                    13              45.8
+ 3 Arizona        2020             55520                     3.7            38.6
+ 4 Arkansas       2020             25300                     4.2            30.6
+ 5 California     2020            307060                     2              58.0
+ 6 Colorado       2020             52330                     2.8            37.4
+ 7 Connecticut    2020             33400                     6.5            40.8
+ 8 Delaware       2020             11410                    11.4            35.7
+ 9 District of …  2020             10320                     1.2            43.3
+10 Florida        2020            183130                     2.2            33.4
+# … with 94 more rows, and 17 more variables: hourly_wage_median &lt;dbl&gt;,
+#   annual_salary_avg &lt;dbl&gt;, annual_salary_median &lt;dbl&gt;,
+#   wage_salary_standard_error_percent &lt;dbl&gt;, hourly_10th_percentile &lt;dbl&gt;,
+#   hourly_25th_percentile &lt;dbl&gt;, hourly_75th_percentile &lt;dbl&gt;,
+#   hourly_90th_percentile &lt;dbl&gt;, annual_10th_percentile &lt;dbl&gt;,
+#   annual_25th_percentile &lt;dbl&gt;, annual_75th_percentile &lt;dbl&gt;,
+#   annual_90th_percentile &lt;dbl&gt;, location_quotient &lt;dbl&gt;,
+#   total_employed_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_national_aggregate &lt;dbl&gt;,
+#   total_employed_healthcare_state_aggregate &lt;dbl&gt;,
+#   yearly_total_employed_state_aggregate &lt;dbl&gt;
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 104 x 3
+   state                 year hourly_wage_median
+   &lt;chr&gt;                &lt;dbl&gt;              &lt;dbl&gt;
+ 1 Alabama               2020               28.2
+ 2 Alaska                2020               45.2
+ 3 Arizona               2020               38.0
+ 4 Arkansas              2020               30.0
+ 5 California            2020               56.9
+ 6 Colorado              2020               36.8
+ 7 Connecticut           2020               39.8
+ 8 Delaware              2020               34.7
+ 9 District of Columbia  2020               43  
+10 Florida               2020               32.5
+# … with 94 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 52 x 3
+   state                `2020` `1998`
+   &lt;chr&gt;                 &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Alabama                28.2   17.6
+ 2 Alaska                 45.2   22.4
+ 3 Arizona                38.0   19.4
+ 4 Arkansas               30.0   16.7
+ 5 California             56.9   24.0
+ 6 Colorado               36.8   19.8
+ 7 Connecticut            39.8   22.3
+ 8 Delaware               34.7   19.7
+ 9 District of Columbia   43     22.8
+10 Florida                32.5   18.9
+# … with 42 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = 1998, y = 2020) +
+  geom_point()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_37_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_38_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_39_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_40_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_41_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_42_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_43_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_44_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_45_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_46_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_47_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2") +
+  geom_segment(aes(xend = `2020`))
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: geom_segment requires the following missing aesthetics: yend
+```
+
+![](template_nurses_files/figure-html/2354_auto_48_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2") +
+  geom_segment(aes(xend = `2020`, yend = state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_49_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2") +
+  geom_segment(aes(xend = `2020`, yend = state,
+                   color = "plum2"))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_50_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2") +
+  geom_segment(aes(xend = `2020`, yend = state), color = "plum2")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_51_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2") +
+  geom_segment(aes(xend = `2020`, yend = state), color = "plum2") +
+  geom_point(aes(x = `2020`))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_52_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum2") +
+  geom_segment(aes(xend = `2020`, yend = state), color = "plum2") +
+  geom_point(aes(x = `2020`),
+             color = "plum4")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_53_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum3") +
+  geom_segment(aes(xend = `2020`, yend = state), color = "plum3") +
+  geom_point(aes(x = `2020`),
+             color = "plum4")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_54_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  mutate(state = fct)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: Problem with `mutate()` column `state`.
+ℹ `state = fct`.
+x object 'fct' not found
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum3") +
+  geom_segment(aes(xend = `2020`, yend = state), color = "plum3") +
+  geom_point(aes(x = `2020`),
+             color = "plum4")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_56_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  arrange(`1998`) %&gt;%
+  mutate(state = fct_inorder(state)) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = state) +
+  geom_point(color = "plum3") +
+  geom_segment(aes(xend = `2020`, yend = state), color = "plum3") +
+  geom_point(aes(x = `2020`),
+             color = "plum4")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_57_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_58_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(xend = `1998`, yend = 0)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error in layer(data = data, mapping = mapping, stat = stat, geom = GeomSegment, : object '1998' not found
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_60_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_61_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "darkgrey")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_62_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_63_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  ggxmean::geom_lm()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_64_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 60)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  ggxmean::geom_lm()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_65_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_point() +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  ggxmean::geom_lm()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_66_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_67_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_68_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 30)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_69_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US")
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_70_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggpmisc::stat_dens2d_filter(geom = "text_repel",
+                              keep.fraction = 0.25)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: 'stat_dens2d_filter' is not an exported object from 'namespace:ggpmisc'
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggrepel::geom_text_repel()
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: geom_text_repel requires the following missing aesthetics: label
+```
+
+![](template_nurses_files/figure-html/2354_auto_72_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggrepel::geom_text_repel(aes(label = state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_73_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggrepel::geom_text_repel(aes(label = state))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_74_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggpmisc::stat_dens2d_filter(geom = "text_repel", keep.fraction = 0.5)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: 'stat_dens2d_filter' is not an exported object from 'namespace:ggpmisc'
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+install.packages("ggpmisc")
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error in contrib.url(repos, "source"): trying to use CRAN without setting a mirror
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+install.packages("ggpmisc")
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error in contrib.url(repos, "source"): trying to use CRAN without setting a mirror
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggpmisc::stat_dens2d_filter(geom = "text_repel", keep.fraction = 0.5)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error: 'stat_dens2d_filter' is not an exported object from 'namespace:ggpmisc'
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 1998, $US") +
+  ggrepel::geom_text_repel(aes(label = state),
+                           data = . %&gt;% sample_frac(.2))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_79_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state),
+                           data = . %&gt;% sample_frac(.2))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_80_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12)),
+                           data = . %&gt;% sample_frac(.2))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_81_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2))
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_82_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+state
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+Error in eval(expr, envir, enclos): object 'state' not found
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+state.abb
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+ [1] "AL" "AK" "AZ" "AR" "CA" "CO" "CT" "DE" "FL" "GA" "HI" "ID" "IL" "IN" "IA"
+[16] "KS" "KY" "LA" "ME" "MD" "MA" "MI" "MN" "MS" "MO" "MT" "NE" "NV" "NH" "NJ"
+[31] "NM" "NY" "NC" "ND" "OH" "OK" "OR" "PA" "RI" "SC" "SD" "TN" "TX" "UT" "VT"
+[46] "VA" "WA" "WV" "WI" "WY"
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+state.name
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+ [1] "Alabama"        "Alaska"         "Arizona"        "Arkansas"      
+ [5] "California"     "Colorado"       "Connecticut"    "Delaware"      
+ [9] "Florida"        "Georgia"        "Hawaii"         "Idaho"         
+[13] "Illinois"       "Indiana"        "Iowa"           "Kansas"        
+[17] "Kentucky"       "Louisiana"      "Maine"          "Maryland"      
+[21] "Massachusetts"  "Michigan"       "Minnesota"      "Mississippi"   
+[25] "Missouri"       "Montana"        "Nebraska"       "Nevada"        
+[29] "New Hampshire"  "New Jersey"     "New Mexico"     "New York"      
+[33] "North Carolina" "North Dakota"   "Ohio"           "Oklahoma"      
+[37] "Oregon"         "Pennsylvania"   "Rhode Island"   "South Carolina"
+[41] "South Dakota"   "Tennessee"      "Texas"          "Utah"          
+[45] "Vermont"        "Virginia"       "Washington"     "West Virginia" 
+[49] "Wisconsin"      "Wyoming"       
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format())
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_86_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format())
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_87_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  theme_minimal()
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_88_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  ggstamp::stamp_arrow(x = 35,
+                       y = 35,
+                       xend = 35,
+                       yend = 50)
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_89_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  ggstamp::stamp_arrow(
+    x = 35,
+    y = 35,
+    xend = 35,
+    yend = 60,
+    size = 1
+  )
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_90_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  ggstamp::stamp_arrow(
+    x = 35,
+    y = 35,
+    xend = 35,
+    yend = 60,
+    size = .5
+  ) +
+  ggstamp::stamp_text(
+    x = 38,
+    y = 50,
+    size = 4,
+    label = "Gain median wage",
+    angle = 90
+  )
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_91_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  ggstamp::stamp_arrow(
+    x = 35,
+    y = 35,
+    xend = 35,
+    yend = 60,
+    size = .5
+  ) +
+  ggstamp::stamp_text(
+    x = 38,
+    y = 50,
+    char_width = 12,
+    size = 4,
+    label = "Gain median wage",
+    angle = -90
+  )
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_92_output-1.png)&lt;!-- --&gt;
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median)
+```
+]
+ 
+.panel2-2354-auto[
+
+```
+# A tibble: 51 x 3
+   state                `2020` `1998`
+   &lt;chr&gt;                 &lt;dbl&gt;  &lt;dbl&gt;
+ 1 Alabama                28.2   17.6
+ 2 Alaska                 45.2   22.4
+ 3 Arizona                38.0   19.4
+ 4 Arkansas               30.0   16.7
+ 5 California             56.9   24.0
+ 6 Colorado               36.8   19.8
+ 7 Connecticut            39.8   22.3
+ 8 Delaware               34.7   19.7
+ 9 District of Columbia   43     22.8
+10 Florida                32.5   18.9
+# … with 41 more rows
+```
+]
+
+---
+count: false
+ 
+
+.panel1-2354-auto[
+
+```r
+nurses %&gt;%
+  filter(state != "Guam" &amp;
+           state != "Virgin Islands" &amp;
+           state != "Puerto Rico") %&gt;%
+  filter(year %in% range(year)) %&gt;%
+  select(state, year, hourly_wage_median) %&gt;%
+  pivot_wider(names_from = year, values_from = hourly_wage_median) %&gt;%
+  ggplot() +
+  aes(x = `1998`, y = `2020`) +
+  geom_abline(slope = 1,
+              intercept = 0,
+              linetype = "dashed") +
+  coord_equal(ylim = c(0, 60),
+              xlim = c(0, 40)) +
+  labs(title = "Median hourly wage, 1998 and 2020",
+       subtitle = "50 US States and District of Columbia") +
+  geom_segment(aes(xend = `1998`, yend = 0),
+               color = "grey")  +
+  geom_segment(aes(xend = `1998`, yend = `1998`),
+               color = "grey35") +
+  geom_point() +
+  ggxmean::geom_lm() +
+  labs(x = "Hourly wage in 1998, $US") +
+  labs(y = "Hourly wage in 2020, $US") +
+  ggrepel::geom_text_repel(aes(label = state %&gt;%
+                                 str_wrap(12),
+                               lineheight = .8),
+                           data = . %&gt;% sample_frac(.2)) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  scale_x_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  ggstamp::stamp_arrow(
+    x = 35,
+    y = 35,
+    xend = 35,
+    yend = 60,
+    size = .75
+  ) +
+  ggstamp::stamp_text(
+    x = 38,
+    y = 50,
+    char_width = 12,
+    size = 4,
+    label = "Gain median wage",
+    angle = -90
+  )
+```
+]
+ 
+.panel2-2354-auto[
+![](template_nurses_files/figure-html/2354_auto_94_output-1.png)&lt;!-- --&gt;
+]
+
+&lt;style&gt;
+.panel1-2354-auto {
+  color: black;
+  width: 38.6060606060606%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-2354-auto {
+  color: black;
+  width: 59.3939393939394%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-2354-auto {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
